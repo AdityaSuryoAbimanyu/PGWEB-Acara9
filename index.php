@@ -5,26 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaflet JS</title>
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
-
     <style>
         html,
         body,
         #map {
             height: 100%;
             width: 100%;
-            margin: 0px;
+            margin: 0;
         }
+
         table {
             margin: 20px;
             border-collapse: collapse;
+            width: calc(100% - 40px);
         }
-        th, td {
+
+        th,
+        td {
             padding: 8px 12px;
             border: 1px solid #ccc;
             text-align: left;
         }
+
         h1 {
             text-align: center;
             margin: 20px;
@@ -41,8 +44,10 @@
     $username = "root";
     $password = "";
     $dbname = "latihan7b";
+
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
+
     // Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
@@ -53,24 +58,30 @@
 
     if ($result->num_rows > 0) {
         echo "<table><tr>
-        <th>Kecamatan</th>
-        <th>Longitude</th>
-        <th>Latitude</th>
-        <th>Luas</th>
-        <th>Jumlah_Penduduk</th>
-        <th>Action</th></tr>";
+            <th>Kecamatan</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+            <th>Luas</th>
+            <th>Jumlah Penduduk</th>
+            <th>Action</th></tr>";
+
         // output data of each row
         while ($row = $result->fetch_assoc()) {
-            echo "<tr><td>" . $row["Kecamatan"] . "</td><td>" .
-                $row["Longitude"] . "</td><td>" .
-                $row["Latitude"] . "</td><td>" .
-                $row["Luas"] . "</td><td align='right'>" .
-                $row["Jumlah_Penduduk"] . "</td>
-                <td><a href='delete.php?id=" . $row["id"] . "' onclick=\"return confirm('Apakah Anda yakin ingin menghapus data ini?');\">Delete</a></td></tr>";
+            echo "<tr>
+                <td>" . htmlspecialchars($row["Kecamatan"]) . "</td>
+                <td>" . htmlspecialchars($row["Longitude"]) . "</td>
+                <td>" . htmlspecialchars($row["Latitude"]) . "</td>
+                <td>" . htmlspecialchars($row["Luas"]) . "</td>
+                <td align='right'>" . htmlspecialchars($row["Jumlah_Penduduk"]) . "</td>
+                <td>
+                    <a href='edit.php?id=" . $row["id"] . "'>Edit</a> | 
+                    <a href='delete.php?id=" . $row["id"] . "' onclick=\"return confirm('Apakah Anda yakin ingin menghapus data ini?');\">Delete</a>
+                </td>
+            </tr>";
         }
         echo "</table>";
     } else {
-        echo "0 results";
+        echo "<p>Tidak ada hasil.</p>";
     }
 
     $conn->close();
@@ -97,9 +108,9 @@
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $lat = $row["Latitude"];
-                $long = $row["Longitude"];
-                $info = $row["Kecamatan"];
+                $lat = htmlspecialchars($row["Latitude"]);
+                $long = htmlspecialchars($row["Longitude"]);
+                $info = htmlspecialchars($row["Kecamatan"]);
                 echo "L.marker([$lat, $long]).addTo(map).bindPopup('$info, $lat, $long');";
             }
         } else {
